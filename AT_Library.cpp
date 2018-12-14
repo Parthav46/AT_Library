@@ -5,25 +5,12 @@ AT_Library::AT_Library() {
     end = "\r\r\n";
 }
 
-AT_Library::AT_Library(String endString) {
-    end = endString;
+AT_Library::AT_Library(String &end) {
+    AT_Library::end = end;
 }
 
 void AT_Library::setPort(Stream &port) {
     serial = &port;
-}
-
-bool AT_Library::ping() {
-    String message = "AT";
-    message.concat(end);
-    send(message);
-    auto input = (unsigned int) response.indexOf((char)13);
-    String resp = response.substring(0, input);
-    return resp.equals("OK");
-}
-
-String AT_Library::getResponse(){
-    return response;
 }
 
 void AT_Library::send(String command) {
@@ -35,4 +22,34 @@ void AT_Library::send(String command) {
     }
     response.replace(command, "");
 }
+
+bool AT_Library::ping() {
+    if(serial == nullptr) return false;
+    String message = "AT";
+    message.concat(end);
+    send(message);
+    return isSuccess();
+}
+
+bool AT_Library::isSuccess() {
+    auto input = response.lastIndexOf('\n', response.length());
+    if(input == -1) input = 0;
+    error = response.substring(input, response.length());
+    return error.equals("OK\r\n");
+}
+
+String AT_Library::getError() {
+    return error;
+}
+
+String AT_Library::sendCommand(String &command) {
+    send(command);
+    return response;
+}
+
+String AT_Library::getResponse(){
+    return response;
+}
+
+
 
