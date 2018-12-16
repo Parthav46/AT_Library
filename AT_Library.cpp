@@ -20,7 +20,6 @@ void AT_Library::send(String &command) {
     while(serial->available()){
         response.concat((char)serial->read());
     }
-    response.replace(command, "");
 }
 
 bool AT_Library::ping() {
@@ -38,17 +37,16 @@ String AT_Library::sendMessage(String &number, String &message) {
     send(command);
     delay(50);
     command = message + end;
+    command.concat(messageEnd);
+    command.concat('\r');
     send(command);
-    delay(50);
-    serial->print(messageEnd);
-    send(end);
+    delay(1000); //Todo: enter error correction methods
     return response;
 }
 
 bool AT_Library::isSuccess() {
-    auto input = response.lastIndexOf('\n', response.length());
-    if(input == -1) input = 0;
-    error = response.substring(input, response.length());
+    auto input = response.lastIndexOf('\n', response.length() - 2);
+    error = response.substring((unsigned int) (input+1), response.length());
     return error.equals("OK\r\n");
 }
 

@@ -8,8 +8,8 @@ class AT_Library{
     public:
         AT_Library();
         explicit AT_Library(String &end);
-        void setPort(Stream &port); //initialize AT_Library with HardwareSerial or SoftwareSerial stream
-        bool ping(); //ping the device for connectivity
+        void setPort(Stream &port);     //initialize AT_Library with HardwareSerial or SoftwareSerial stream
+        bool ping();                    //ping the device for connectivity
         String sendMessage(String &number, String &message);
         String sendCommand(String &command, bool check);
         String getResponse();
@@ -18,7 +18,7 @@ class AT_Library{
     private:
         void send(String &command);
         String error;
-        String response;
+        String response = "";
         String end;
         Stream *serial = nullptr;
 };
