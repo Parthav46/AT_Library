@@ -13,7 +13,7 @@ void AT_Library::setPort(Stream &port) {
     serial = &port;
 }
 
-void AT_Library::send(String command) {
+void AT_Library::send(String &command) {
     serial->print(command);
     delay(50);
     response = "";
@@ -31,6 +31,20 @@ bool AT_Library::ping() {
     return isSuccess();
 }
 
+String AT_Library::sendMessage(String &number, String &message) {
+    String ascii = "AT+CMGF=1" + end;
+    send(ascii);
+    String command = "AT+CMGS=\"" + number + "\"" + end;
+    send(command);
+    delay(50);
+    command = message + end;
+    send(command);
+    delay(50);
+    serial->print(messageEnd);
+    send(end);
+    return response;
+}
+
 bool AT_Library::isSuccess() {
     auto input = response.lastIndexOf('\n', response.length());
     if(input == -1) input = 0;
@@ -42,8 +56,10 @@ String AT_Library::getError() {
     return error;
 }
 
-String AT_Library::sendCommand(String &command) {
-    send(command);
+String AT_Library::sendCommand(String &command, bool check) {
+    do{
+        send(command);
+    } while(check && !isSuccess());
     return response;
 }
 
