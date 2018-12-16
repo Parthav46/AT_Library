@@ -1,8 +1,8 @@
-#ifndef AT_LIBRARY_LIBRARY_H
-#define AT_LIBRARY_LIBRARY_H
+#ifndef AT_LIBRARY_H
+#define AT_LIBRARY_H
 
 #include <Arduino.h>
-#define messageEnd (char)26
+//#define messageEnd (char)26
 
 class AT_Library{
     public:
